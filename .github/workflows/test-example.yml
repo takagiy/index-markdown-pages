@@ -7,8 +7,12 @@ jobs:
   test:
     name: "Test"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - uses: ./
         with:
           root-patterns: "example/README.md"
