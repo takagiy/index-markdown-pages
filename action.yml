@@ -1,6 +1,9 @@
 name: 'Index Markdown Pages'
 author: 'Yuki Takagi'
 description: 'Collect the markdown files in the repository and create an index'
+branding:
+  icon: 'book'
+  color: 'blue'
 inputs:
   root-patterns:
     description: 'Glob patterns (separated by newlines) matching the root documents. The indexes will be written to that documents.'
