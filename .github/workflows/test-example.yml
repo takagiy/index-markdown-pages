@@ -1,0 +1,21 @@
+name: test-example
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    name: "Test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          root-patterns: "example/README.md"
+          header: "## Index"
+      - run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add .
+          git commit -m "[action] Update index"
+          git push
