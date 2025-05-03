@@ -1,13 +1,13 @@
 name: 'Index Markdown Pages'
 author: 'Yuki Takagi'
-description: 'Collects all markdown files in the repository and creates an index'
+description: 'Collect the markdown files in the repository and create an index'
 inputs:
   root-patterns:
-    description: 'The pattern of the root document. The index is written out to that document. Separated by newlines.'
+    description: 'Glob patterns (separated by newlines) matching the root documents. The indexes will be written to that documents.'
     required: false
     default: 'README.md'
   header:
-    description: 'The header to be added to the index'
+    description: 'Header to be added to the index'
     required: false
     default: '## Index'
 runs:
