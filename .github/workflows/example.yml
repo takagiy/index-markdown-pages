@@ -1,11 +1,11 @@
-name: test-example
+name: example
 on:
   push:
     branches:
       - main
 jobs:
   test:
-    name: "Test"
+    name: "Example"
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -18,8 +18,12 @@ jobs:
           root-patterns: "example/README.md"
           header: "## Index"
       - run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          git add .
-          git commit -m "[action] Update index"
-          git push
+          git add -N .
+          if ! git diff --exit-code --quiet
+          then
+            git config user.email "action@github.com"
+            git config user.name "GitHub Action"
+            git add .
+            git commit -m "Update"
+            git push
+          fi
