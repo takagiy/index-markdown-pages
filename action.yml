@@ -1,0 +1,15 @@
+name: 'Index Markdown Pages'
+author: 'Yuki Takagi'
+description: 'Collects all markdown files in the repository and creates an index'
+inputs:
+  root-patterns:
+    description: 'The pattern of the root document. The index is written out to that document. Separated by newlines.'
+    required: false
+    default: 'README.md'
+  header:
+    description: 'The header to be added to the index'
+    required: false
+    default: '## Index'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

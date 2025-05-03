@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "@tsconfig/strictest/tsconfig.json"
+  ],
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "declaration": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+  }
+}
