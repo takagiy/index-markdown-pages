@@ -1,3 +1,4 @@
+import { info } from "@actions/core";
 import SimpleGit from "simple-git";
 
 export class Git {
@@ -30,10 +31,14 @@ export class Git {
       .then((branchs) => branchs.current);
     try {
       const commitBranch = await git.revparse(["--abbrev-ref", this.commitOn]);
+
+      info(`Commit changes to "${commitBranch}".`);
       await git.checkout(commitBranch);
       await git.add(modifiedFiles);
       await git.commit(this.commitMessage);
+
       if (this.doesPush) {
+        info(`Push changes to "${commitBranch}".`);
         await git.pull("origin", commitBranch, ["--rebase"]);
         await git.push();
       }

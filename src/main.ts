@@ -1,4 +1,4 @@
-import { setFailed } from "@actions/core";
+import { info, setFailed } from "@actions/core";
 import { globStream } from "fast-glob";
 import { ChildDocuments } from "./ChilidDocuments";
 import { Document } from "./Document";
@@ -15,6 +15,7 @@ export async function run(): Promise<void> {
     const modifiedFiles: string[] = [];
 
     for await (const rootDocument of rootDocuments) {
+      info(`Update index in "${rootDocument}".`);
       const childDocuments = await ChildDocuments.search(rootDocument, {
         excludePatterns: inputs.excludePatterns,
       });
