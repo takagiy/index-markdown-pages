@@ -13,7 +13,7 @@ import require$$0$6 from 'stream';
 import require$$7 from 'buffer';
 import require$$8 from 'querystring';
 import require$$14 from 'stream/web';
-import require$$0$8, { Transform } from 'node:stream';
+import require$$0$8 from 'node:stream';
 import require$$1$1 from 'node:util';
 import require$$0$7 from 'node:events';
 import require$$0$9 from 'worker_threads';
@@ -27,17 +27,10 @@ import require$$6 from 'string_decoder';
 import require$$0$a from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
-import fs$4 from 'node:fs';
-import path$1, { dirname, relative, join } from 'node:path';
-import process$1 from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { dirname, relative, join } from 'node:path';
 import { readFile, writeFile } from 'node:fs/promises';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-function getDefaultExportFromCjs (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-}
 
 var core = {};
 
@@ -24088,145 +24081,6 @@ function requireCore () {
 
 var coreExports = requireCore();
 
-var merge2_1;
-var hasRequiredMerge2;
-
-function requireMerge2 () {
-	if (hasRequiredMerge2) return merge2_1;
-	hasRequiredMerge2 = 1;
-	/*
-	 * merge2
-	 * https://github.com/teambition/merge2
-	 *
-	 * Copyright (c) 2014-2020 Teambition
-	 * Licensed under the MIT license.
-	 */ const Stream = require$$0$6;
-	const PassThrough = Stream.PassThrough;
-	const slice = Array.prototype.slice;
-	merge2_1 = merge2;
-	function merge2() {
-	    const streamsQueue = [];
-	    const args = slice.call(arguments);
-	    let merging = false;
-	    let options = args[args.length - 1];
-	    if (options && !Array.isArray(options) && options.pipe == null) {
-	        args.pop();
-	    } else {
-	        options = {};
-	    }
-	    const doEnd = options.end !== false;
-	    const doPipeError = options.pipeError === true;
-	    if (options.objectMode == null) {
-	        options.objectMode = true;
-	    }
-	    if (options.highWaterMark == null) {
-	        options.highWaterMark = 64 * 1024;
-	    }
-	    const mergedStream = PassThrough(options);
-	    function addStream() {
-	        for(let i = 0, len = arguments.length; i < len; i++){
-	            streamsQueue.push(pauseStreams(arguments[i], options));
-	        }
-	        mergeStream();
-	        return this;
-	    }
-	    function mergeStream() {
-	        if (merging) {
-	            return;
-	        }
-	        merging = true;
-	        let streams = streamsQueue.shift();
-	        if (!streams) {
-	            process.nextTick(endStream);
-	            return;
-	        }
-	        if (!Array.isArray(streams)) {
-	            streams = [
-	                streams
-	            ];
-	        }
-	        let pipesCount = streams.length + 1;
-	        function next() {
-	            if (--pipesCount > 0) {
-	                return;
-	            }
-	            merging = false;
-	            mergeStream();
-	        }
-	        function pipe(stream) {
-	            function onend() {
-	                stream.removeListener('merge2UnpipeEnd', onend);
-	                stream.removeListener('end', onend);
-	                if (doPipeError) {
-	                    stream.removeListener('error', onerror);
-	                }
-	                next();
-	            }
-	            function onerror(err) {
-	                mergedStream.emit('error', err);
-	            }
-	            // skip ended stream
-	            if (stream._readableState.endEmitted) {
-	                return next();
-	            }
-	            stream.on('merge2UnpipeEnd', onend);
-	            stream.on('end', onend);
-	            if (doPipeError) {
-	                stream.on('error', onerror);
-	            }
-	            stream.pipe(mergedStream, {
-	                end: false
-	            });
-	            // compatible for old stream
-	            stream.resume();
-	        }
-	        for(let i = 0; i < streams.length; i++){
-	            pipe(streams[i]);
-	        }
-	        next();
-	    }
-	    function endStream() {
-	        merging = false;
-	        // emit 'queueDrain' when all streams merged.
-	        mergedStream.emit('queueDrain');
-	        if (doEnd) {
-	            mergedStream.end();
-	        }
-	    }
-	    mergedStream.setMaxListeners(0);
-	    mergedStream.add = addStream;
-	    mergedStream.on('unpipe', function(stream) {
-	        stream.emit('merge2UnpipeEnd');
-	    });
-	    if (args.length) {
-	        addStream.apply(null, args);
-	    }
-	    return mergedStream;
-	}
-	// check and pause streams for pipe.
-	function pauseStreams(streams, options) {
-	    if (!Array.isArray(streams)) {
-	        // Backwards-compat with old-style streams
-	        if (!streams._readableState && streams.pipe) {
-	            streams = streams.pipe(PassThrough(options));
-	        }
-	        if (!streams._readableState || !streams.pause || !streams.pipe) {
-	            throw new Error('Only readable stream can be merged.');
-	        }
-	        streams.pause();
-	    } else {
-	        for(let i = 0, len = streams.length; i < len; i++){
-	            streams[i] = pauseStreams(streams[i], options);
-	        }
-	    }
-	    return streams;
-	}
-	return merge2_1;
-}
-
-var merge2Exports = requireMerge2();
-var merge2 = /*@__PURE__*/getDefaultExportFromCjs(merge2Exports);
-
 var tasks = {};
 
 var utils$3 = {};
@@ -28450,6 +28304,142 @@ function requirePattern () {
 
 var stream$3 = {};
 
+var merge2_1;
+var hasRequiredMerge2;
+
+function requireMerge2 () {
+	if (hasRequiredMerge2) return merge2_1;
+	hasRequiredMerge2 = 1;
+	/*
+	 * merge2
+	 * https://github.com/teambition/merge2
+	 *
+	 * Copyright (c) 2014-2020 Teambition
+	 * Licensed under the MIT license.
+	 */ const Stream = require$$0$6;
+	const PassThrough = Stream.PassThrough;
+	const slice = Array.prototype.slice;
+	merge2_1 = merge2;
+	function merge2() {
+	    const streamsQueue = [];
+	    const args = slice.call(arguments);
+	    let merging = false;
+	    let options = args[args.length - 1];
+	    if (options && !Array.isArray(options) && options.pipe == null) {
+	        args.pop();
+	    } else {
+	        options = {};
+	    }
+	    const doEnd = options.end !== false;
+	    const doPipeError = options.pipeError === true;
+	    if (options.objectMode == null) {
+	        options.objectMode = true;
+	    }
+	    if (options.highWaterMark == null) {
+	        options.highWaterMark = 64 * 1024;
+	    }
+	    const mergedStream = PassThrough(options);
+	    function addStream() {
+	        for(let i = 0, len = arguments.length; i < len; i++){
+	            streamsQueue.push(pauseStreams(arguments[i], options));
+	        }
+	        mergeStream();
+	        return this;
+	    }
+	    function mergeStream() {
+	        if (merging) {
+	            return;
+	        }
+	        merging = true;
+	        let streams = streamsQueue.shift();
+	        if (!streams) {
+	            process.nextTick(endStream);
+	            return;
+	        }
+	        if (!Array.isArray(streams)) {
+	            streams = [
+	                streams
+	            ];
+	        }
+	        let pipesCount = streams.length + 1;
+	        function next() {
+	            if (--pipesCount > 0) {
+	                return;
+	            }
+	            merging = false;
+	            mergeStream();
+	        }
+	        function pipe(stream) {
+	            function onend() {
+	                stream.removeListener('merge2UnpipeEnd', onend);
+	                stream.removeListener('end', onend);
+	                if (doPipeError) {
+	                    stream.removeListener('error', onerror);
+	                }
+	                next();
+	            }
+	            function onerror(err) {
+	                mergedStream.emit('error', err);
+	            }
+	            // skip ended stream
+	            if (stream._readableState.endEmitted) {
+	                return next();
+	            }
+	            stream.on('merge2UnpipeEnd', onend);
+	            stream.on('end', onend);
+	            if (doPipeError) {
+	                stream.on('error', onerror);
+	            }
+	            stream.pipe(mergedStream, {
+	                end: false
+	            });
+	            // compatible for old stream
+	            stream.resume();
+	        }
+	        for(let i = 0; i < streams.length; i++){
+	            pipe(streams[i]);
+	        }
+	        next();
+	    }
+	    function endStream() {
+	        merging = false;
+	        // emit 'queueDrain' when all streams merged.
+	        mergedStream.emit('queueDrain');
+	        if (doEnd) {
+	            mergedStream.end();
+	        }
+	    }
+	    mergedStream.setMaxListeners(0);
+	    mergedStream.add = addStream;
+	    mergedStream.on('unpipe', function(stream) {
+	        stream.emit('merge2UnpipeEnd');
+	    });
+	    if (args.length) {
+	        addStream.apply(null, args);
+	    }
+	    return mergedStream;
+	}
+	// check and pause streams for pipe.
+	function pauseStreams(streams, options) {
+	    if (!Array.isArray(streams)) {
+	        // Backwards-compat with old-style streams
+	        if (!streams._readableState && streams.pipe) {
+	            streams = streams.pipe(PassThrough(options));
+	        }
+	        if (!streams._readableState || !streams.pause || !streams.pipe) {
+	            throw new Error('Only readable stream can be merged.');
+	        }
+	        streams.pause();
+	    } else {
+	        for(let i = 0, len = streams.length; i < len; i++){
+	            streams[i] = pauseStreams(streams[i], options);
+	        }
+	    }
+	    return streams;
+	}
+	return merge2_1;
+}
+
 var hasRequiredStream$3;
 
 function requireStream$3 () {
@@ -30903,791 +30893,6 @@ function requireOut () {
 }
 
 var outExports = requireOut();
-var fastGlob = /*@__PURE__*/getDefaultExportFromCjs(outExports);
-
-var dirGlob$1 = {exports: {}};
-
-var pathType = {};
-
-var hasRequiredPathType;
-
-function requirePathType () {
-	if (hasRequiredPathType) return pathType;
-	hasRequiredPathType = 1;
-	const { promisify } = require$$0$3;
-	const fs = require$$0$2;
-	async function isType(fsStatType, statsMethodName, filePath) {
-	    if (typeof filePath !== 'string') {
-	        throw new TypeError(`Expected a string, got ${typeof filePath}`);
-	    }
-	    try {
-	        const stats = await promisify(fs[fsStatType])(filePath);
-	        return stats[statsMethodName]();
-	    } catch (error) {
-	        if (error.code === 'ENOENT') {
-	            return false;
-	        }
-	        throw error;
-	    }
-	}
-	function isTypeSync(fsStatType, statsMethodName, filePath) {
-	    if (typeof filePath !== 'string') {
-	        throw new TypeError(`Expected a string, got ${typeof filePath}`);
-	    }
-	    try {
-	        return fs[fsStatType](filePath)[statsMethodName]();
-	    } catch (error) {
-	        if (error.code === 'ENOENT') {
-	            return false;
-	        }
-	        throw error;
-	    }
-	}
-	pathType.isFile = isType.bind(null, 'stat', 'isFile');
-	pathType.isDirectory = isType.bind(null, 'stat', 'isDirectory');
-	pathType.isSymlink = isType.bind(null, 'lstat', 'isSymbolicLink');
-	pathType.isFileSync = isTypeSync.bind(null, 'statSync', 'isFile');
-	pathType.isDirectorySync = isTypeSync.bind(null, 'statSync', 'isDirectory');
-	pathType.isSymlinkSync = isTypeSync.bind(null, 'lstatSync', 'isSymbolicLink');
-	return pathType;
-}
-
-var hasRequiredDirGlob;
-
-function requireDirGlob () {
-	if (hasRequiredDirGlob) return dirGlob$1.exports;
-	hasRequiredDirGlob = 1;
-	const path = require$$0$b;
-	const pathType = requirePathType();
-	const getExtensions = (extensions)=>extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0];
-	const getPath = (filepath, cwd)=>{
-	    const pth = filepath[0] === '!' ? filepath.slice(1) : filepath;
-	    return path.isAbsolute(pth) ? pth : path.join(cwd, pth);
-	};
-	const addExtensions = (file, extensions)=>{
-	    if (path.extname(file)) {
-	        return `**/${file}`;
-	    }
-	    return `**/${file}.${getExtensions(extensions)}`;
-	};
-	const getGlob = (directory, options)=>{
-	    if (options.files && !Array.isArray(options.files)) {
-	        throw new TypeError(`Expected \`files\` to be of type \`Array\` but received type \`${typeof options.files}\``);
-	    }
-	    if (options.extensions && !Array.isArray(options.extensions)) {
-	        throw new TypeError(`Expected \`extensions\` to be of type \`Array\` but received type \`${typeof options.extensions}\``);
-	    }
-	    if (options.files && options.extensions) {
-	        return options.files.map((x)=>path.posix.join(directory, addExtensions(x, options.extensions)));
-	    }
-	    if (options.files) {
-	        return options.files.map((x)=>path.posix.join(directory, `**/${x}`));
-	    }
-	    if (options.extensions) {
-	        return [
-	            path.posix.join(directory, `**/*.${getExtensions(options.extensions)}`)
-	        ];
-	    }
-	    return [
-	        path.posix.join(directory, '**')
-	    ];
-	};
-	dirGlob$1.exports = async (input, options)=>{
-	    options = {
-	        cwd: process.cwd(),
-	        ...options
-	    };
-	    if (typeof options.cwd !== 'string') {
-	        throw new TypeError(`Expected \`cwd\` to be of type \`string\` but received type \`${typeof options.cwd}\``);
-	    }
-	    const globs = await Promise.all([].concat(input).map(async (x)=>{
-	        const isDirectory = await pathType.isDirectory(getPath(x, options.cwd));
-	        return isDirectory ? getGlob(x, options) : x;
-	    }));
-	    return [].concat.apply([], globs); // eslint-disable-line prefer-spread
-	};
-	dirGlob$1.exports.sync = (input, options)=>{
-	    options = {
-	        cwd: process.cwd(),
-	        ...options
-	    };
-	    if (typeof options.cwd !== 'string') {
-	        throw new TypeError(`Expected \`cwd\` to be of type \`string\` but received type \`${typeof options.cwd}\``);
-	    }
-	    const globs = [].concat(input).map((x)=>pathType.isDirectorySync(getPath(x, options.cwd)) ? getGlob(x, options) : x);
-	    return [].concat.apply([], globs); // eslint-disable-line prefer-spread
-	};
-	return dirGlob$1.exports;
-}
-
-var dirGlobExports = requireDirGlob();
-var dirGlob = /*@__PURE__*/getDefaultExportFromCjs(dirGlobExports);
-
-var ignore;
-var hasRequiredIgnore;
-
-function requireIgnore () {
-	if (hasRequiredIgnore) return ignore;
-	hasRequiredIgnore = 1;
-	// A simple implementation of make-array
-	function makeArray(subject) {
-	    return Array.isArray(subject) ? subject : [
-	        subject
-	    ];
-	}
-	const EMPTY = '';
-	const SPACE = ' ';
-	const ESCAPE = '\\';
-	const REGEX_TEST_BLANK_LINE = /^\s+$/;
-	const REGEX_INVALID_TRAILING_BACKSLASH = /(?:[^\\]|^)\\$/;
-	const REGEX_REPLACE_LEADING_EXCAPED_EXCLAMATION = /^\\!/;
-	const REGEX_REPLACE_LEADING_EXCAPED_HASH = /^\\#/;
-	const REGEX_SPLITALL_CRLF = /\r?\n/g;
-	// /foo,
-	// ./foo,
-	// ../foo,
-	// .
-	// ..
-	const REGEX_TEST_INVALID_PATH = /^\.*\/|^\.+$/;
-	const SLASH = '/';
-	// Do not use ternary expression here, since "istanbul ignore next" is buggy
-	let TMP_KEY_IGNORE = 'node-ignore';
-	/* istanbul ignore else */ if (typeof Symbol !== 'undefined') {
-	    TMP_KEY_IGNORE = Symbol.for('node-ignore');
-	}
-	const KEY_IGNORE = TMP_KEY_IGNORE;
-	const define = (object, key, value)=>Object.defineProperty(object, key, {
-	        value
-	    });
-	const REGEX_REGEXP_RANGE = /([0-z])-([0-z])/g;
-	const RETURN_FALSE = ()=>false;
-	// Sanitize the range of a regular expression
-	// The cases are complicated, see test cases for details
-	const sanitizeRange = (range)=>range.replace(REGEX_REGEXP_RANGE, (match, from, to)=>from.charCodeAt(0) <= to.charCodeAt(0) ? match : EMPTY);
-	// See fixtures #59
-	const cleanRangeBackSlash = (slashes)=>{
-	    const { length } = slashes;
-	    return slashes.slice(0, length - length % 2);
-	};
-	// > If the pattern ends with a slash,
-	// > it is removed for the purpose of the following description,
-	// > but it would only find a match with a directory.
-	// > In other words, foo/ will match a directory foo and paths underneath it,
-	// > but will not match a regular file or a symbolic link foo
-	// >  (this is consistent with the way how pathspec works in general in Git).
-	// '`foo/`' will not match regular file '`foo`' or symbolic link '`foo`'
-	// -> ignore-rules will not deal with it, because it costs extra `fs.stat` call
-	//      you could use option `mark: true` with `glob`
-	// '`foo/`' should not continue with the '`..`'
-	const REPLACERS = [
-	    [
-	        // remove BOM
-	        // TODO:
-	        // Other similar zero-width characters?
-	        /^\uFEFF/,
-	        ()=>EMPTY
-	    ],
-	    // > Trailing spaces are ignored unless they are quoted with backslash ("\")
-	    [
-	        // (a\ ) -> (a )
-	        // (a  ) -> (a)
-	        // (a ) -> (a)
-	        // (a \ ) -> (a  )
-	        /((?:\\\\)*?)(\\?\s+)$/,
-	        (_, m1, m2)=>m1 + (m2.indexOf('\\') === 0 ? SPACE : EMPTY)
-	    ],
-	    // replace (\ ) with ' '
-	    // (\ ) -> ' '
-	    // (\\ ) -> '\\ '
-	    // (\\\ ) -> '\\ '
-	    [
-	        /(\\+?)\s/g,
-	        (_, m1)=>{
-	            const { length } = m1;
-	            return m1.slice(0, length - length % 2) + SPACE;
-	        }
-	    ],
-	    // Escape metacharacters
-	    // which is written down by users but means special for regular expressions.
-	    // > There are 12 characters with special meanings:
-	    // > - the backslash \,
-	    // > - the caret ^,
-	    // > - the dollar sign $,
-	    // > - the period or dot .,
-	    // > - the vertical bar or pipe symbol |,
-	    // > - the question mark ?,
-	    // > - the asterisk or star *,
-	    // > - the plus sign +,
-	    // > - the opening parenthesis (,
-	    // > - the closing parenthesis ),
-	    // > - and the opening square bracket [,
-	    // > - the opening curly brace {,
-	    // > These special characters are often called "metacharacters".
-	    [
-	        /[\\$.|*+(){^]/g,
-	        (match)=>`\\${match}`
-	    ],
-	    [
-	        // > a question mark (?) matches a single character
-	        /(?!\\)\?/g,
-	        ()=>'[^/]'
-	    ],
-	    // leading slash
-	    [
-	        // > A leading slash matches the beginning of the pathname.
-	        // > For example, "/*.c" matches "cat-file.c" but not "mozilla-sha1/sha1.c".
-	        // A leading slash matches the beginning of the pathname
-	        /^\//,
-	        ()=>'^'
-	    ],
-	    // replace special metacharacter slash after the leading slash
-	    [
-	        /\//g,
-	        ()=>'\\/'
-	    ],
-	    [
-	        // > A leading "**" followed by a slash means match in all directories.
-	        // > For example, "**/foo" matches file or directory "foo" anywhere,
-	        // > the same as pattern "foo".
-	        // > "**/foo/bar" matches file or directory "bar" anywhere that is directly
-	        // >   under directory "foo".
-	        // Notice that the '*'s have been replaced as '\\*'
-	        /^\^*\\\*\\\*\\\//,
-	        // '**/foo' <-> 'foo'
-	        ()=>'^(?:.*\\/)?'
-	    ],
-	    // starting
-	    [
-	        // there will be no leading '/'
-	        //   (which has been replaced by section "leading slash")
-	        // If starts with '**', adding a '^' to the regular expression also works
-	        /^(?=[^^])/,
-	        function startingReplacer() {
-	            // If has a slash `/` at the beginning or middle
-	            return !/\/(?!$)/.test(this) ? '(?:^|\\/)' : '^';
-	        }
-	    ],
-	    // two globstars
-	    [
-	        // Use lookahead assertions so that we could match more than one `'/**'`
-	        /\\\/\\\*\\\*(?=\\\/|$)/g,
-	        // Zero, one or several directories
-	        // should not use '*', or it will be replaced by the next replacer
-	        // Check if it is not the last `'/**'`
-	        (_, index, str)=>index + 6 < str.length ? '(?:\\/[^\\/]+)*' : '\\/.+'
-	    ],
-	    // normal intermediate wildcards
-	    [
-	        // Never replace escaped '*'
-	        // ignore rule '\*' will match the path '*'
-	        // 'abc.*/' -> go
-	        // 'abc.*'  -> skip this rule,
-	        //    coz trailing single wildcard will be handed by [trailing wildcard]
-	        /(^|[^\\]+)(\\\*)+(?=.+)/g,
-	        // '*.js' matches '.js'
-	        // '*.js' doesn't match 'abc'
-	        (_, p1, p2)=>{
-	            // 1.
-	            // > An asterisk "*" matches anything except a slash.
-	            // 2.
-	            // > Other consecutive asterisks are considered regular asterisks
-	            // > and will match according to the previous rules.
-	            const unescaped = p2.replace(/\\\*/g, '[^\\/]*');
-	            return p1 + unescaped;
-	        }
-	    ],
-	    [
-	        // unescape, revert step 3 except for back slash
-	        // For example, if a user escape a '\\*',
-	        // after step 3, the result will be '\\\\\\*'
-	        /\\\\\\(?=[$.|*+(){^])/g,
-	        ()=>ESCAPE
-	    ],
-	    [
-	        // '\\\\' -> '\\'
-	        /\\\\/g,
-	        ()=>ESCAPE
-	    ],
-	    [
-	        // > The range notation, e.g. [a-zA-Z],
-	        // > can be used to match one of the characters in a range.
-	        // `\` is escaped by step 3
-	        /(\\)?\[([^\]/]*?)(\\*)($|\])/g,
-	        (match, leadEscape, range, endEscape, close)=>leadEscape === ESCAPE ? `\\[${range}${cleanRangeBackSlash(endEscape)}${close}` : close === ']' ? endEscape.length % 2 === 0 ? `[${sanitizeRange(range)}${endEscape}]` : '[]' : '[]'
-	    ],
-	    // ending
-	    [
-	        // 'js' will not match 'js.'
-	        // 'ab' will not match 'abc'
-	        /(?:[^*])$/,
-	        // WTF!
-	        // https://git-scm.com/docs/gitignore
-	        // changes in [2.22.1](https://git-scm.com/docs/gitignore/2.22.1)
-	        // which re-fixes #24, #38
-	        // > If there is a separator at the end of the pattern then the pattern
-	        // > will only match directories, otherwise the pattern can match both
-	        // > files and directories.
-	        // 'js*' will not match 'a.js'
-	        // 'js/' will not match 'a.js'
-	        // 'js' will match 'a.js' and 'a.js/'
-	        (match)=>/\/$/.test(match) ? `${match}$` : `${match}(?=$|\\/$)`
-	    ],
-	    // trailing wildcard
-	    [
-	        /(\^|\\\/)?\\\*$/,
-	        (_, p1)=>{
-	            const prefix = p1 ? `${p1}[^/]+` : '[^/]*';
-	            return `${prefix}(?=$|\\/$)`;
-	        }
-	    ]
-	];
-	// A simple cache, because an ignore rule only has only one certain meaning
-	const regexCache = Object.create(null);
-	// @param {pattern}
-	const makeRegex = (pattern, ignoreCase)=>{
-	    let source = regexCache[pattern];
-	    if (!source) {
-	        source = REPLACERS.reduce((prev, [matcher, replacer])=>prev.replace(matcher, replacer.bind(pattern)), pattern);
-	        regexCache[pattern] = source;
-	    }
-	    return ignoreCase ? new RegExp(source, 'i') : new RegExp(source);
-	};
-	const isString = (subject)=>typeof subject === 'string';
-	// > A blank line matches no files, so it can serve as a separator for readability.
-	const checkPattern = (pattern)=>pattern && isString(pattern) && !REGEX_TEST_BLANK_LINE.test(pattern) && !REGEX_INVALID_TRAILING_BACKSLASH.test(pattern) && pattern.indexOf('#') !== 0;
-	const splitPattern = (pattern)=>pattern.split(REGEX_SPLITALL_CRLF);
-	class IgnoreRule {
-	    constructor(origin, pattern, negative, regex){
-	        this.origin = origin;
-	        this.pattern = pattern;
-	        this.negative = negative;
-	        this.regex = regex;
-	    }
-	}
-	const createRule = (pattern, ignoreCase)=>{
-	    const origin = pattern;
-	    let negative = false;
-	    // > An optional prefix "!" which negates the pattern;
-	    if (pattern.indexOf('!') === 0) {
-	        negative = true;
-	        pattern = pattern.substr(1);
-	    }
-	    pattern = pattern// > Put a backslash ("\") in front of the first "!" for patterns that
-	    // >   begin with a literal "!", for example, `"\!important!.txt"`.
-	    .replace(REGEX_REPLACE_LEADING_EXCAPED_EXCLAMATION, '!')// > Put a backslash ("\") in front of the first hash for patterns that
-	    // >   begin with a hash.
-	    .replace(REGEX_REPLACE_LEADING_EXCAPED_HASH, '#');
-	    const regex = makeRegex(pattern, ignoreCase);
-	    return new IgnoreRule(origin, pattern, negative, regex);
-	};
-	const throwError = (message, Ctor)=>{
-	    throw new Ctor(message);
-	};
-	const checkPath = (path, originalPath, doThrow)=>{
-	    if (!isString(path)) {
-	        return doThrow(`path must be a string, but got \`${originalPath}\``, TypeError);
-	    }
-	    // We don't know if we should ignore EMPTY, so throw
-	    if (!path) {
-	        return doThrow(`path must not be empty`, TypeError);
-	    }
-	    // Check if it is a relative path
-	    if (checkPath.isNotRelative(path)) {
-	        const r = '`path.relative()`d';
-	        return doThrow(`path should be a ${r} string, but got "${originalPath}"`, RangeError);
-	    }
-	    return true;
-	};
-	const isNotRelative = (path)=>REGEX_TEST_INVALID_PATH.test(path);
-	checkPath.isNotRelative = isNotRelative;
-	checkPath.convert = (p)=>p;
-	class Ignore {
-	    constructor({ ignorecase = true, ignoreCase = ignorecase, allowRelativePaths = false } = {}){
-	        define(this, KEY_IGNORE, true);
-	        this._rules = [];
-	        this._ignoreCase = ignoreCase;
-	        this._allowRelativePaths = allowRelativePaths;
-	        this._initCache();
-	    }
-	    _initCache() {
-	        this._ignoreCache = Object.create(null);
-	        this._testCache = Object.create(null);
-	    }
-	    _addPattern(pattern) {
-	        // #32
-	        if (pattern && pattern[KEY_IGNORE]) {
-	            this._rules = this._rules.concat(pattern._rules);
-	            this._added = true;
-	            return;
-	        }
-	        if (checkPattern(pattern)) {
-	            const rule = createRule(pattern, this._ignoreCase);
-	            this._added = true;
-	            this._rules.push(rule);
-	        }
-	    }
-	    // @param {Array<string> | string | Ignore} pattern
-	    add(pattern) {
-	        this._added = false;
-	        makeArray(isString(pattern) ? splitPattern(pattern) : pattern).forEach(this._addPattern, this);
-	        // Some rules have just added to the ignore,
-	        // making the behavior changed.
-	        if (this._added) {
-	            this._initCache();
-	        }
-	        return this;
-	    }
-	    // legacy
-	    addPattern(pattern) {
-	        return this.add(pattern);
-	    }
-	    //          |           ignored : unignored
-	    // negative |   0:0   |   0:1   |   1:0   |   1:1
-	    // -------- | ------- | ------- | ------- | --------
-	    //     0    |  TEST   |  TEST   |  SKIP   |    X
-	    //     1    |  TESTIF |  SKIP   |  TEST   |    X
-	    // - SKIP: always skip
-	    // - TEST: always test
-	    // - TESTIF: only test if checkUnignored
-	    // - X: that never happen
-	    // @param {boolean} whether should check if the path is unignored,
-	    //   setting `checkUnignored` to `false` could reduce additional
-	    //   path matching.
-	    // @returns {TestResult} true if a file is ignored
-	    _testOne(path, checkUnignored) {
-	        let ignored = false;
-	        let unignored = false;
-	        this._rules.forEach((rule)=>{
-	            const { negative } = rule;
-	            if (unignored === negative && ignored !== unignored || negative && !ignored && !unignored && !checkUnignored) {
-	                return;
-	            }
-	            const matched = rule.regex.test(path);
-	            if (matched) {
-	                ignored = !negative;
-	                unignored = negative;
-	            }
-	        });
-	        return {
-	            ignored,
-	            unignored
-	        };
-	    }
-	    // @returns {TestResult}
-	    _test(originalPath, cache, checkUnignored, slices) {
-	        const path = originalPath && checkPath.convert(originalPath);
-	        checkPath(path, originalPath, this._allowRelativePaths ? RETURN_FALSE : throwError);
-	        return this._t(path, cache, checkUnignored, slices);
-	    }
-	    _t(path, cache, checkUnignored, slices) {
-	        if (path in cache) {
-	            return cache[path];
-	        }
-	        if (!slices) {
-	            // path/to/a.js
-	            // ['path', 'to', 'a.js']
-	            slices = path.split(SLASH);
-	        }
-	        slices.pop();
-	        // If the path has no parent directory, just test it
-	        if (!slices.length) {
-	            return cache[path] = this._testOne(path, checkUnignored);
-	        }
-	        const parent = this._t(slices.join(SLASH) + SLASH, cache, checkUnignored, slices);
-	        // If the path contains a parent directory, check the parent first
-	        return cache[path] = parent.ignored ? parent : this._testOne(path, checkUnignored);
-	    }
-	    ignores(path) {
-	        return this._test(path, this._ignoreCache, false).ignored;
-	    }
-	    createFilter() {
-	        return (path)=>!this.ignores(path);
-	    }
-	    filter(paths) {
-	        return makeArray(paths).filter(this.createFilter());
-	    }
-	    // @returns {TestResult}
-	    test(path) {
-	        return this._test(path, this._testCache, true);
-	    }
-	}
-	const factory = (options)=>new Ignore(options);
-	const isPathValid = (path)=>checkPath(path && checkPath.convert(path), path, RETURN_FALSE);
-	factory.isPathValid = isPathValid;
-	// Fixes typescript
-	factory.default = factory;
-	ignore = factory;
-	// Windows
-	// --------------------------------------------------------------
-	/* istanbul ignore if */ if (// Detect `process` so that it can run in browsers.
-	typeof process !== 'undefined' && (process.env && process.env.IGNORE_TEST_WIN32 || process.platform === 'win32')) {
-	    /* eslint no-control-regex: "off" */ const makePosix = (str)=>/^\\\\\?\\/.test(str) || /["<>|\u0000-\u001F]+/u.test(str) ? str : str.replace(/\\/g, '/');
-	    checkPath.convert = makePosix;
-	    // 'C:\\foo'     <- 'C:\\foo' has been converted to 'C:/'
-	    // 'd:\\foo'
-	    const REGIX_IS_WINDOWS_PATH_ABSOLUTE = /^[a-z]:\//i;
-	    checkPath.isNotRelative = (path)=>REGIX_IS_WINDOWS_PATH_ABSOLUTE.test(path) || isNotRelative(path);
-	}
-	return ignore;
-}
-
-var ignoreExports = requireIgnore();
-var gitIgnore = /*@__PURE__*/getDefaultExportFromCjs(ignoreExports);
-
-function slash(path) {
-    const isExtendedLengthPath = /^\\\\\?\\/.test(path);
-    const hasNonAscii = /[^\u0000-\u0080]+/.test(path); // eslint-disable-line no-control-regex
-    if (isExtendedLengthPath || hasNonAscii) {
-        return path;
-    }
-    return path.replace(/\\/g, '/');
-}
-
-const toPath = (urlOrPath)=>urlOrPath instanceof URL ? fileURLToPath(urlOrPath) : urlOrPath;
-class FilterStream extends Transform {
-    constructor(filter){
-        super({
-            objectMode: true,
-            transform (data, encoding, callback) {
-                callback(undefined, filter(data) ? data : undefined);
-            }
-        });
-    }
-}
-const isNegativePattern = (pattern)=>pattern[0] === '!';
-
-const ignoreFilesGlobOptions = {
-    ignore: [
-        '**/node_modules',
-        '**/flow-typed',
-        '**/coverage',
-        '**/.git'
-    ],
-    absolute: true,
-    dot: true
-};
-const GITIGNORE_FILES_PATTERN = '**/.gitignore';
-const applyBaseToPattern = (pattern, base)=>isNegativePattern(pattern) ? '!' + path$1.posix.join(base, pattern.slice(1)) : path$1.posix.join(base, pattern);
-const parseIgnoreFile = (file, cwd)=>{
-    const base = slash(path$1.relative(cwd, path$1.dirname(file.filePath)));
-    return file.content.split(/\r?\n/).filter((line)=>line && !line.startsWith('#')).map((pattern)=>applyBaseToPattern(pattern, base));
-};
-const toRelativePath = (fileOrDirectory, cwd)=>{
-    cwd = slash(cwd);
-    if (path$1.isAbsolute(fileOrDirectory)) {
-        if (slash(fileOrDirectory).startsWith(cwd)) {
-            return path$1.relative(cwd, fileOrDirectory);
-        }
-        throw new Error(`Path ${fileOrDirectory} is not in cwd ${cwd}`);
-    }
-    return fileOrDirectory;
-};
-const getIsIgnoredPredicate = (files, cwd)=>{
-    const patterns = files.flatMap((file)=>parseIgnoreFile(file, cwd));
-    const ignores = gitIgnore().add(patterns);
-    return (fileOrDirectory)=>{
-        fileOrDirectory = toPath(fileOrDirectory);
-        fileOrDirectory = toRelativePath(fileOrDirectory, cwd);
-        return fileOrDirectory ? ignores.ignores(slash(fileOrDirectory)) : false;
-    };
-};
-const normalizeOptions$1 = (options = {})=>({
-        cwd: toPath(options.cwd) || process$1.cwd(),
-        suppressErrors: Boolean(options.suppressErrors),
-        deep: typeof options.deep === 'number' ? options.deep : Number.POSITIVE_INFINITY
-    });
-const isIgnoredByIgnoreFiles = async (patterns, options)=>{
-    const { cwd, suppressErrors, deep } = normalizeOptions$1(options);
-    const paths = await fastGlob(patterns, {
-        cwd,
-        suppressErrors,
-        deep,
-        ...ignoreFilesGlobOptions
-    });
-    const files = await Promise.all(paths.map(async (filePath)=>({
-            filePath,
-            content: await fs$4.promises.readFile(filePath, 'utf8')
-        })));
-    return getIsIgnoredPredicate(files, cwd);
-};
-const isIgnoredByIgnoreFilesSync = (patterns, options)=>{
-    const { cwd, suppressErrors, deep } = normalizeOptions$1(options);
-    const paths = fastGlob.sync(patterns, {
-        cwd,
-        suppressErrors,
-        deep,
-        ...ignoreFilesGlobOptions
-    });
-    const files = paths.map((filePath)=>({
-            filePath,
-            content: fs$4.readFileSync(filePath, 'utf8')
-        }));
-    return getIsIgnoredPredicate(files, cwd);
-};
-
-const assertPatternsInput = (patterns)=>{
-    if (patterns.some((pattern)=>typeof pattern !== 'string')) {
-        throw new TypeError('Patterns must be a string or an array of strings');
-    }
-};
-const toPatternsArray = (patterns)=>{
-    patterns = [
-        ...new Set([
-            patterns
-        ].flat())
-    ];
-    assertPatternsInput(patterns);
-    return patterns;
-};
-const checkCwdOption = (options)=>{
-    if (!options.cwd) {
-        return;
-    }
-    let stat;
-    try {
-        stat = fs$4.statSync(options.cwd);
-    } catch  {
-        return;
-    }
-    if (!stat.isDirectory()) {
-        throw new Error('The `cwd` option must be a path to a directory');
-    }
-};
-const normalizeOptions = (options = {})=>{
-    options = {
-        ...options,
-        ignore: options.ignore || [],
-        expandDirectories: options.expandDirectories === undefined ? true : options.expandDirectories,
-        cwd: toPath(options.cwd)
-    };
-    checkCwdOption(options);
-    return options;
-};
-const normalizeArguments = (fn)=>async (patterns, options)=>fn(toPatternsArray(patterns), normalizeOptions(options));
-const normalizeArgumentsSync = (fn)=>(patterns, options)=>fn(toPatternsArray(patterns), normalizeOptions(options));
-const getIgnoreFilesPatterns = (options)=>{
-    const { ignoreFiles, gitignore } = options;
-    const patterns = ignoreFiles ? toPatternsArray(ignoreFiles) : [];
-    if (gitignore) {
-        patterns.push(GITIGNORE_FILES_PATTERN);
-    }
-    return patterns;
-};
-const getFilter = async (options)=>{
-    const ignoreFilesPatterns = getIgnoreFilesPatterns(options);
-    return createFilterFunction(ignoreFilesPatterns.length > 0 && await isIgnoredByIgnoreFiles(ignoreFilesPatterns, options));
-};
-const getFilterSync = (options)=>{
-    const ignoreFilesPatterns = getIgnoreFilesPatterns(options);
-    return createFilterFunction(ignoreFilesPatterns.length > 0 && isIgnoredByIgnoreFilesSync(ignoreFilesPatterns, options));
-};
-const createFilterFunction = (isIgnored)=>{
-    const seen = new Set();
-    return (fastGlobResult)=>{
-        const path = fastGlobResult.path || fastGlobResult;
-        const pathKey = path$1.normalize(path);
-        const seenOrIgnored = seen.has(pathKey) || isIgnored && isIgnored(path);
-        seen.add(pathKey);
-        return !seenOrIgnored;
-    };
-};
-const unionFastGlobResults = (results, filter)=>results.flat().filter((fastGlobResult)=>filter(fastGlobResult));
-const unionFastGlobStreams = (streams, filter)=>merge2(streams).pipe(new FilterStream((fastGlobResult)=>filter(fastGlobResult)));
-const convertNegativePatterns = (patterns, options)=>{
-    const tasks = [];
-    while(patterns.length > 0){
-        const index = patterns.findIndex((pattern)=>isNegativePattern(pattern));
-        if (index === -1) {
-            tasks.push({
-                patterns,
-                options
-            });
-            break;
-        }
-        const ignorePattern = patterns[index].slice(1);
-        for (const task of tasks){
-            task.options.ignore.push(ignorePattern);
-        }
-        if (index !== 0) {
-            tasks.push({
-                patterns: patterns.slice(0, index),
-                options: {
-                    ...options,
-                    ignore: [
-                        ...options.ignore,
-                        ignorePattern
-                    ]
-                }
-            });
-        }
-        patterns = patterns.slice(index + 1);
-    }
-    return tasks;
-};
-const getDirGlobOptions = (options, cwd)=>({
-        ...cwd ? {
-            cwd
-        } : {},
-        ...Array.isArray(options) ? {
-            files: options
-        } : options
-    });
-const generateTasks = async (patterns, options)=>{
-    const globTasks = convertNegativePatterns(patterns, options);
-    const { cwd, expandDirectories } = options;
-    if (!expandDirectories) {
-        return globTasks;
-    }
-    const patternExpandOptions = getDirGlobOptions(expandDirectories, cwd);
-    const ignoreExpandOptions = cwd ? {
-        cwd
-    } : undefined;
-    return Promise.all(globTasks.map(async (task)=>{
-        let { patterns, options } = task;
-        [patterns, options.ignore] = await Promise.all([
-            dirGlob(patterns, patternExpandOptions),
-            dirGlob(options.ignore, ignoreExpandOptions)
-        ]);
-        return {
-            patterns,
-            options
-        };
-    }));
-};
-const generateTasksSync = (patterns, options)=>{
-    const globTasks = convertNegativePatterns(patterns, options);
-    const { cwd, expandDirectories } = options;
-    if (!expandDirectories) {
-        return globTasks;
-    }
-    const patternExpandOptions = getDirGlobOptions(expandDirectories, cwd);
-    const ignoreExpandOptions = cwd ? {
-        cwd
-    } : undefined;
-    return globTasks.map((task)=>{
-        let { patterns, options } = task;
-        patterns = dirGlob.sync(patterns, patternExpandOptions);
-        options.ignore = dirGlob.sync(options.ignore, ignoreExpandOptions);
-        return {
-            patterns,
-            options
-        };
-    });
-};
-const globby = normalizeArguments(async (patterns, options)=>{
-    const [tasks, filter] = await Promise.all([
-        generateTasks(patterns, options),
-        getFilter(options)
-    ]);
-    const results = await Promise.all(tasks.map((task)=>fastGlob(task.patterns, task.options)));
-    return unionFastGlobResults(results, filter);
-});
-const globbyStream = normalizeArgumentsSync((patterns, options)=>{
-    const tasks = generateTasksSync(patterns, options);
-    const filter = getFilterSync(options);
-    const streams = tasks.map((task)=>fastGlob.stream(task.patterns, task.options));
-    return unionFastGlobStreams(streams, filter);
-});
 
 class Document {
     constructor(path, content){
@@ -31744,7 +30949,7 @@ class ChildDocuments {
     }
     static async search(rootDocument) {
         const rootDirectory = dirname(rootDocument);
-        const childDocuments = await globby(`${rootDirectory}/**/*.md`).then((entries)=>entries.filter((entry)=>entry !== rootDocument).map((entry)=>relative(rootDirectory, entry)));
+        const childDocuments = await outExports.glob(`${rootDirectory}/**/*.md`).then((entries)=>entries.filter((entry)=>entry !== rootDocument).map((entry)=>relative(rootDirectory, entry)));
         return new ChildDocuments(rootDocument, rootDirectory, childDocuments);
     }
     async toIndexBlock(header) {
@@ -31784,7 +30989,7 @@ async function run() {
     }
 }
 async function* searchRootDocuments(rootPatterns) {
-    for await (const rootDocument of globbyStream(rootPatterns)){
+    for await (const rootDocument of outExports.globStream(rootPatterns)){
         yield rootDocument.toString();
     }
 }

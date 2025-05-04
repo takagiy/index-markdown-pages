@@ -1,5 +1,5 @@
 import { dirname, join, relative } from "node:path";
-import { globby } from "globby";
+import { glob } from "fast-glob";
 import { Document } from "./Document";
 
 export class ChildDocuments {
@@ -11,7 +11,7 @@ export class ChildDocuments {
 
   static async search(rootDocument: string) {
     const rootDirectory = dirname(rootDocument);
-    const childDocuments = await globby(`${rootDirectory}/**/*.md`).then(
+    const childDocuments = await glob(`${rootDirectory}/**/*.md`).then(
       (entries) =>
         entries
           .filter((entry) => entry !== rootDocument)

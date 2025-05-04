@@ -1,5 +1,5 @@
 import { setFailed } from "@actions/core";
-import { globbyStream } from "globby";
+import { globStream } from "fast-glob";
 import { ChildDocuments } from "./ChilidDocuments";
 import { Document } from "./Document";
 import { Inputs } from "./Inputs";
@@ -22,7 +22,7 @@ export async function run(): Promise<void> {
 }
 
 async function* searchRootDocuments(rootPatterns: string[]) {
-  for await (const rootDocument of globbyStream(rootPatterns)) {
+  for await (const rootDocument of globStream(rootPatterns)) {
     yield rootDocument.toString();
   }
 }
