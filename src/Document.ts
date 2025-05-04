@@ -12,7 +12,7 @@ export class Document {
   }
 
   static MATCH_SPECIAL_CHARACTERS =
-    /\\\x60\*_\{\}\[\]\x3c\x3e\x23\(\)\x21\+\x2d\|/g;
+    /[\\\x60\*_\{\}\[\]\x3c\x3e\x23\(\)\x21\+\x2d\|]/g;
 
   static escape(text: string): string {
     return text.replaceAll(Document.MATCH_SPECIAL_CHARACTERS, (match) => {

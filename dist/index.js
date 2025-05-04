@@ -31699,7 +31699,7 @@ class Document {
         return new Document(path, content);
     }
     static{
-        this.MATCH_SPECIAL_CHARACTERS = /\\\x60\*_\{\}\[\]\x3c\x3e\x23\(\)\x21\+\x2d\|/g;
+        this.MATCH_SPECIAL_CHARACTERS = /[\\\x60\*_\{\}\[\]\x3c\x3e\x23\(\)\x21\+\x2d\|]/g;
     }
     static escape(text) {
         return text.replaceAll(Document.MATCH_SPECIAL_CHARACTERS, (match)=>{
