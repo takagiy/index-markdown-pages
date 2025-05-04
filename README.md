@@ -5,6 +5,18 @@ An action to collect the markdown files in the repository and create an index
 # Usage
 
 ```yaml
+- use: takagiy/index-markdown-pages@v0
+  with:
+    # Glob patterns (separated by newlines) matching the root documents.
+    # The indexes will be written to that documents.
+    root-patterns: README.md
+    # Header to be added to the index
+    header: '## Index'
+```
+
+# Usage
+
+```yaml
 jobs:
   test:
     name: "Create markdown index"
@@ -17,10 +29,7 @@ jobs:
           ref: ${{ github.ref }}
       - use: takagiy/index-markdown-pages@v0
         with:
-          # Glob patterns (separated by newlines) matching the root documents.
-          # The indexes will be written to that documents.
           root-patterns: README.md
-          # Header to be added to the index
           header: '## Index'
       - name: Create commit
         run: |
