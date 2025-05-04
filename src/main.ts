@@ -11,7 +11,7 @@ export async function run(): Promise<void> {
 
     for await (const rootDocument of rootDocuments) {
       const childDocuments = await ChildDocuments.search(rootDocument);
-      const indexBlock = childDocuments.toIndexBlock(inputs.header);
+      const indexBlock = await childDocuments.toIndexBlock(inputs.header);
       const document = await Document.open(rootDocument);
       document.replaceOrAppend(indexBlock);
       await document.save();

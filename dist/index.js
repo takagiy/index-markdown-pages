@@ -31737,12 +31737,12 @@ class ChildDocuments {
         const childDocuments = await globby(`${rootDirectory}/**/*.md`).then((entries)=>entries.filter((entry)=>entry !== rootDocument).map((entry)=>relative(rootDirectory, entry)));
         return new ChildDocuments(rootDocument, rootDirectory, childDocuments);
     }
-    toIndexBlock(header) {
-        return header.concat("\n\n|title|path|").concat(this.childDocuments.toSorted().map(async (childDocument)=>{
+    async toIndexBlock(header) {
+        return header.concat("\n\n|title|path|").concat(await Promise.all(this.childDocuments.toSorted().map(async (childDocument)=>{
             const document = await Document.open(join(this.rootDirectory, childDocument));
             const title = document.title() ?? "";
             return `|${Document.escape(title)}|${Document.escape(childDocument)}|\n`;
-        }).join(""));
+        })).then((rows)=>rows.join("")));
     }
 }
 
@@ -31764,7 +31764,7 @@ async function run() {
         const rootDocuments = searchRootDocuments(inputs.rootPatterns);
         for await (const rootDocument of rootDocuments){
             const childDocuments = await ChildDocuments.search(rootDocument);
-            const indexBlock = childDocuments.toIndexBlock(inputs.header);
+            const indexBlock = await childDocuments.toIndexBlock(inputs.header);
             const document = await Document.open(rootDocument);
             document.replaceOrAppend(indexBlock);
             await document.save();

@@ -20,18 +20,17 @@ export class ChildDocuments {
     return new ChildDocuments(rootDocument, rootDirectory, childDocuments);
   }
 
-  toIndexBlock(header: string) {
+  async toIndexBlock(header: string): Promise<string> {
     return header.concat("\n\n|title|path|").concat(
-      this.childDocuments
-        .toSorted()
-        .map(async (childDocument) => {
+      await Promise.all(
+        this.childDocuments.toSorted().map(async (childDocument) => {
           const document = await Document.open(
             join(this.rootDirectory, childDocument),
           );
           const title = document.title() ?? "";
           return `|${Document.escape(title)}|${Document.escape(childDocument)}|\n`;
-        })
-        .join(""),
+        }),
+      ).then((rows) => rows.join("")),
     );
   }
 }
