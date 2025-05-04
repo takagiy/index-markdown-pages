@@ -1,4 +1,4 @@
-import { dirname, relative } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { globby } from "globby";
 import { Document } from "./Document";
 
@@ -25,7 +25,9 @@ export class ChildDocuments {
       this.childDocuments
         .toSorted()
         .map(async (childDocument) => {
-          const document = await Document.open(childDocument);
+          const document = await Document.open(
+            join(this.rootDirectory, childDocument),
+          );
           const title = document.title() ?? "";
           return `|${Document.escape(title)}|${Document.escape(childDocument)}|\n`;
         })

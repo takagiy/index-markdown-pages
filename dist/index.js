@@ -28,7 +28,7 @@ import require$$0$a from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
 import fs$4 from 'node:fs';
-import path$1, { dirname, relative } from 'node:path';
+import path$1, { dirname, relative, join } from 'node:path';
 import process$1 from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -31739,7 +31739,7 @@ class ChildDocuments {
     }
     toIndexBlock(header) {
         return header.concat("\n\n|title|path|").concat(this.childDocuments.toSorted().map(async (childDocument)=>{
-            const document = await Document.open(childDocument);
+            const document = await Document.open(join(this.rootDirectory, childDocument));
             const title = document.title() ?? "";
             return `|${Document.escape(title)}|${Document.escape(childDocument)}|\n`;
         }).join(""));
