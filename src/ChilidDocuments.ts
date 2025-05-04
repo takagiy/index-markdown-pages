@@ -32,7 +32,7 @@ export class ChildDocuments {
           const document = await Document.open(
             join(this.rootDirectory, childDocument),
           );
-          const title = document.title() ?? "";
+          const title = (await document.title()) ?? "";
           return `|${Document.escape(title)}|[${Document.escape(childDocument)}](${Document.escapeLink(childDocument)})|\n`;
         }),
       ).then((rows) => rows.join("")),

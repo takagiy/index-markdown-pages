@@ -17,7 +17,7 @@ export async function run(): Promise<void> {
       });
       const indexBlock = await childDocuments.toIndexBlock(inputs.header);
       const document = await Document.open(rootDocument);
-      document.replaceOrAppend(indexBlock);
+      await document.replaceOrAppend(indexBlock);
       await document.save();
     }
   } catch (error) {
