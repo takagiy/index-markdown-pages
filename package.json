@@ -2,7 +2,7 @@
   "name": "index-markdown-pages",
   "version": "2.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/index.mjs",
   "files": [
     "dist"
   ],
@@ -10,7 +10,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rollup --config rollup.config.mjs",
+    "build": "rm -rf dist && rollup --config rollup.config.mjs",
     "lint": "biome check; status=$?; echo 'Use `pnpm run lint!` to apply the fixes.'; exit $status",
     "lint!": "biome check --write",
     "test": "pnpm run test:types && ava",
