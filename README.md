@@ -14,7 +14,7 @@ An action to collect the markdown files in the repository and create an index
     header: '## Index'
 ```
 
-# Usage
+# Example
 
 ```yaml
 jobs:
