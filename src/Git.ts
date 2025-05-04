@@ -32,7 +32,7 @@ export class Git {
       await git.checkout(this.commitOn);
       await git.commit(this.commitMessage);
       if (this.doesPush) {
-        await git.pull(["--rebase"]);
+        await git.pull("origin", this.commitOn, ["--rebase"]);
         await git.push();
       }
     } finally {
