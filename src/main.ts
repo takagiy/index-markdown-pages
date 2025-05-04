@@ -12,6 +12,8 @@ export async function run(): Promise<void> {
       excludePatterns: inputs.excludePatterns,
     });
 
+    const modifiedFiles: string[] = [];
+
     for await (const rootDocument of rootDocuments) {
       const childDocuments = await ChildDocuments.search(rootDocument, {
         excludePatterns: inputs.excludePatterns,
@@ -20,10 +22,11 @@ export async function run(): Promise<void> {
       const document = await Document.open(rootDocument);
       await document.replaceOrAppend(indexBlock);
       await document.save();
+      modifiedFiles.push(rootDocument);
     }
 
     const git = Git.of(inputs.git);
-    await git.commitAndPush();
+    await git.commitAndPush(modifiedFiles);
   } catch (error) {
     if (error instanceof Error) setFailed(error.message);
   }

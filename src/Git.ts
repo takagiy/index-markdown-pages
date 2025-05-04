@@ -17,7 +17,7 @@ export class Git {
     return new Git(opts.commit, opts.commitOn, opts.commitMessage, opts.push);
   }
 
-  async commitAndPush() {
+  async commitAndPush(modifiedFiles: string[]) {
     if (!this.doesCommit) {
       return;
     }
@@ -31,6 +31,7 @@ export class Git {
     try {
       const commitBranch = await git.revparse(["--abbrev-ref", this.commitOn]);
       await git.checkout(commitBranch);
+      await git.add(modifiedFiles);
       await git.commit(this.commitMessage);
       if (this.doesPush) {
         await git.pull("origin", commitBranch, ["--rebase"]);
