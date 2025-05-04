@@ -16,7 +16,7 @@ baz qux
 |Baz|[baz.md](baz.md)|
 |Bar|[foo/bar.md](foo/bar.md)|
 |Test to see if action can handle a filename with special characters|[foo/filename\_includes\_\#\)\!\|\\\(.md](foo/filename%5fincludes%5f%23%29%21%7c%5c%28.md)|
-|Test to see action can handle filenames with parentheses|[foo/filename\_includes\_\(paren\).md](foo/filename%5fincludes%5f%28paren%29.md)|
+|Test to see if action can handle filenames with parentheses|[foo/filename\_includes\_\(paren\).md](foo/filename%5fincludes%5f%28paren%29.md)|
 |Foo|[foo/foo.md](foo/foo.md)|
 |This is a document title \(H1\)|[qux/quuux.md](qux/quuux.md)|
 |Quux|[qux/quux/quux.md](qux/quux/quux.md)|
