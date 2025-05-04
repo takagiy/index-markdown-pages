@@ -36496,4 +36496,4 @@ async function* searchRootDocuments(rootPatterns, opts) {
 }
 
 run();
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.mjs.map
