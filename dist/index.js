@@ -31738,7 +31738,7 @@ class ChildDocuments {
         return new ChildDocuments(rootDocument, rootDirectory, childDocuments);
     }
     async toIndexBlock(header) {
-        return header.concat("\n\n|title|path|").concat(await Promise.all(this.childDocuments.toSorted().map(async (childDocument)=>{
+        return header.concat("\n\n|title|path|\n|----|----|\n").concat(await Promise.all(this.childDocuments.toSorted().map(async (childDocument)=>{
             const document = await Document.open(join(this.rootDirectory, childDocument));
             const title = document.title() ?? "";
             return `|${Document.escape(title)}|${Document.escape(childDocument)}|\n`;

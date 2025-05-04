@@ -21,7 +21,7 @@ export class ChildDocuments {
   }
 
   async toIndexBlock(header: string): Promise<string> {
-    return header.concat("\n\n|title|path|").concat(
+    return header.concat("\n\n|title|path|\n|----|----|\n").concat(
       await Promise.all(
         this.childDocuments.toSorted().map(async (childDocument) => {
           const document = await Document.open(
