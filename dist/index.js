@@ -30946,9 +30946,9 @@ class Document {
         if (doesMatch) {
             this.content = this.content.replace(new RegExp(`${MARKER_BEGIN}.*${MARKER_END}`, "s"), `${MARKER_BEGIN}\n${append}${MARKER_END}`);
         } else if (this.content.endsWith("\n")) {
-            this.content += `\n${MARKER_BEGIN}\n${append}${MARKER_END}`;
+            this.content += `\n${MARKER_BEGIN}\n${append}${MARKER_END}\n`;
         } else {
-            this.content += `\n\n${MARKER_BEGIN}\n${append}${MARKER_END}`;
+            this.content += `\n\n${MARKER_BEGIN}\n${append}${MARKER_END}\n`;
         }
     }
 }
@@ -36408,7 +36408,7 @@ class Git {
     static of(opts) {
         return new Git(opts.commit, opts.commitOn, opts.commitMessage, opts.push);
     }
-    async commitAndPush() {
+    async commitAndPush(modifiedFiles) {
         if (!this.doesCommit) {
             return;
         }
@@ -36417,10 +36417,15 @@ class Git {
         await git.addConfig("user.email", "action@github.com");
         const currentBranch = await git.branchLocal().then((branchs)=>branchs.current);
         try {
-            await git.checkout(this.commitOn);
+            const commitBranch = await git.revparse([
+                "--abbrev-ref",
+                this.commitOn
+            ]);
+            await git.checkout(commitBranch);
+            await git.add(modifiedFiles);
             await git.commit(this.commitMessage);
             if (this.doesPush) {
-                await git.pull("origin", this.commitOn, [
+                await git.pull("origin", commitBranch, [
                     "--rebase"
                 ]);
                 await git.push();
@@ -36461,6 +36466,7 @@ async function run() {
         const rootDocuments = searchRootDocuments(inputs.rootPatterns, {
             excludePatterns: inputs.excludePatterns
         });
+        const modifiedFiles = [];
         for await (const rootDocument of rootDocuments){
             const childDocuments = await ChildDocuments.search(rootDocument, {
                 excludePatterns: inputs.excludePatterns
@@ -36469,9 +36475,10 @@ async function run() {
             const document = await Document.open(rootDocument);
             await document.replaceOrAppend(indexBlock);
             await document.save();
+            modifiedFiles.push(rootDocument);
         }
         const git = Git.of(inputs.git);
-        await git.commitAndPush();
+        await git.commitAndPush(modifiedFiles);
     } catch (error) {
         if (error instanceof Error) coreExports.setFailed(error.message);
     }
