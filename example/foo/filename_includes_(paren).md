@@ -1,1 +1,1 @@
-# Test to see action can handle filenames with parentheses
+# Test to see if action can handle filenames with parentheses
