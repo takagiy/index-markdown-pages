@@ -36421,10 +36421,12 @@ class Git {
                 "--abbrev-ref",
                 this.commitOn
             ]);
+            coreExports.info(`Commit changes to "${commitBranch}".`);
             await git.checkout(commitBranch);
             await git.add(modifiedFiles);
             await git.commit(this.commitMessage);
             if (this.doesPush) {
+                coreExports.info(`Push changes to "${commitBranch}".`);
                 await git.pull("origin", commitBranch, [
                     "--rebase"
                 ]);
@@ -36468,6 +36470,7 @@ async function run() {
         });
         const modifiedFiles = [];
         for await (const rootDocument of rootDocuments){
+            coreExports.info(`Update index in "${rootDocument}".`);
             const childDocuments = await ChildDocuments.search(rootDocument, {
                 excludePatterns: inputs.excludePatterns
             });
