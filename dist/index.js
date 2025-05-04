@@ -31701,6 +31701,9 @@ class Document {
     static escape(text) {
         return text.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("*", "\\*").replaceAll("_", "\\_").replaceAll("{", "\\{").replaceAll("}", "\\}").replaceAll("[", "\\[").replaceAll("]", "\\]").replaceAll("<", "\\<").replaceAll(">", "\\>").replaceAll("(", "\\(").replaceAll(")", "\\)").replaceAll("#", "\\#").replaceAll("+", "\\+").replaceAll("-", "\\-").replaceAll(".", "\\.").replaceAll("!", "\\!").replaceAll("|", "\\|");
     }
+    static escapeLink(text) {
+        return text.replaceAll("(", (match)=>`%${match.charCodeAt(0).toString(16)}`).replaceAll(")", (match)=>`%${match.charCodeAt(0).toString(16)}`);
+    }
     async save() {
         writeFile(this.path, this.content, "utf-8");
     }
@@ -31741,7 +31744,7 @@ class ChildDocuments {
         return header.concat("\n\n|title|path|\n|----|----|\n").concat(await Promise.all(this.childDocuments.toSorted().map(async (childDocument)=>{
             const document = await Document.open(join(this.rootDirectory, childDocument));
             const title = document.title() ?? "";
-            return `|${Document.escape(title)}|[${Document.escape(childDocument)}](${childDocument})|\n`;
+            return `|${Document.escape(title)}|[${Document.escape(childDocument)}](${Document.escapeLink(childDocument)})|\n`;
         })).then((rows)=>rows.join("")));
     }
 }

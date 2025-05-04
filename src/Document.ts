@@ -33,6 +33,12 @@ export class Document {
       .replaceAll("|", "\\|");
   }
 
+  static escapeLink(text: string): string {
+    return text
+      .replaceAll("(", (match) => `%${match.charCodeAt(0).toString(16)}`)
+      .replaceAll(")", (match) => `%${match.charCodeAt(0).toString(16)}`);
+  }
+
   async save() {
     writeFile(this.path, this.content, "utf-8");
   }
