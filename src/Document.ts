@@ -11,8 +11,38 @@ export class Document {
     return new Document(path, content);
   }
 
+  static escape(text: string): string {
+    return text
+      .replaceAll("\\", "\\\\")
+      .replaceAll("`", "\\`")
+      .replaceAll("*", "\\*")
+      .replaceAll("_", "\\_")
+      .replaceAll("{", "\\{")
+      .replaceAll("}", "\\}")
+      .replaceAll("[", "\\[")
+      .replaceAll("]", "\\]")
+      .replaceAll("<", "\\<")
+      .replaceAll(">", "\\>")
+      .replaceAll("(", "\\(")
+      .replaceAll(")", "\\)")
+      .replaceAll("#", "\\#")
+      .replaceAll("+", "\\+")
+      .replaceAll("-", "\\-")
+      .replaceAll(".", "\\.")
+      .replaceAll("!", "\\!")
+      .replaceAll("|", "\\|");
+  }
+
   async save() {
     writeFile(this.path, this.content, "utf-8");
+  }
+
+  title(): string | null {
+    const titleMatch = this.content.match(/^# (.*)$/m);
+    if (!titleMatch?.[1]) {
+      return null;
+    }
+    return titleMatch[1];
   }
 
   replaceOrAppend(appendContent: string) {

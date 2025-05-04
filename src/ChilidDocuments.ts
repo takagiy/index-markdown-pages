@@ -1,5 +1,6 @@
 import { dirname, relative } from "node:path";
 import { globby } from "globby";
+import { Document } from "./Document";
 
 export class ChildDocuments {
   protected constructor(
@@ -20,10 +21,14 @@ export class ChildDocuments {
   }
 
   toIndexBlock(header: string) {
-    return header.concat("\n\n").concat(
+    return header.concat("\n\n|title|path|").concat(
       this.childDocuments
         .toSorted()
-        .map((childDocument) => `- [${childDocument}](${childDocument})\n`)
+        .map(async (childDocument) => {
+          const document = await Document.open(childDocument);
+          const title = document.title() ?? "";
+          return `|${Document.escape(title)}|${Document.escape(childDocument)}|\n`;
+        })
         .join(""),
     );
   }
