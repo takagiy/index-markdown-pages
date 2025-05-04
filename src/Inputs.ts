@@ -9,7 +9,9 @@ export class Inputs {
 
   public static get(): Inputs {
     const rootPatterns = getMultilineInput("root-patterns");
-    const excludePatterns = getMultilineInput("exclude-patterns");
+    const excludePatterns = getMultilineInput("exclude-patterns").filter(
+      (pattern) => pattern !== "",
+    );
     const header = getInput("header");
     return new Inputs(rootPatterns, excludePatterns, header);
   }

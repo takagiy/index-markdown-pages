@@ -30972,7 +30972,7 @@ class Inputs {
     }
     static get() {
         const rootPatterns = coreExports.getMultilineInput("root-patterns");
-        const excludePatterns = coreExports.getMultilineInput("exclude-patterns");
+        const excludePatterns = coreExports.getMultilineInput("exclude-patterns").filter((pattern)=>pattern !== "");
         const header = coreExports.getInput("header");
         return new Inputs(rootPatterns, excludePatterns, header);
     }
