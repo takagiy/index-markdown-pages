@@ -28,7 +28,7 @@ export class ChildDocuments {
             join(this.rootDirectory, childDocument),
           );
           const title = document.title() ?? "";
-          return `|${Document.escape(title)}|${Document.escape(childDocument)}|\n`;
+          return `|${Document.escape(title)}|[${Document.escape(childDocument)}](${childDocument})|\n`;
         }),
       ).then((rows) => rows.join("")),
     );

@@ -31741,7 +31741,7 @@ class ChildDocuments {
         return header.concat("\n\n|title|path|\n|----|----|\n").concat(await Promise.all(this.childDocuments.toSorted().map(async (childDocument)=>{
             const document = await Document.open(join(this.rootDirectory, childDocument));
             const title = document.title() ?? "";
-            return `|${Document.escape(title)}|${Document.escape(childDocument)}|\n`;
+            return `|${Document.escape(title)}|[${Document.escape(childDocument)}](${childDocument})|\n`;
         })).then((rows)=>rows.join("")));
     }
 }
