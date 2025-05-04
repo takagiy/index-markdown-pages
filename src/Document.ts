@@ -11,48 +11,19 @@ export class Document {
     return new Document(path, content);
   }
 
+  static MATCH_SPECIAL_CHARACTERS =
+    /\\\x60\*_\{\}\[\]\x3c\x3e\x23\(\)\x21\+\x2d\|/g;
+
   static escape(text: string): string {
-    return text
-      .replaceAll("\\", "\\\\")
-      .replaceAll("`", "\\`")
-      .replaceAll("*", "\\*")
-      .replaceAll("_", "\\_")
-      .replaceAll("{", "\\{")
-      .replaceAll("}", "\\}")
-      .replaceAll("[", "\\[")
-      .replaceAll("]", "\\]")
-      .replaceAll("<", "\\<")
-      .replaceAll(">", "\\>")
-      .replaceAll("(", "\\(")
-      .replaceAll(")", "\\)")
-      .replaceAll("#", "\\#")
-      .replaceAll("+", "\\+")
-      .replaceAll("-", "\\-")
-      .replaceAll(".", "\\.")
-      .replaceAll("!", "\\!")
-      .replaceAll("|", "\\|");
+    return text.replaceAll(Document.MATCH_SPECIAL_CHARACTERS, (match) => {
+      return `\\${match}`;
+    });
   }
 
   static escapeLink(text: string): string {
-    return text
-      .replaceAll("\\", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("`", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("*", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("_", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("{", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("}", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("[", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("]", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("<", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll(">", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("(", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll(")", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("#", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("+", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("-", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll(".", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("!", (match) => `%${match.charCodeAt(0).toString(16)}`)
-      .replaceAll("|", (match) => `%${match.charCodeAt(0).toString(16)}`);
+    return text.replaceAll(Document.MATCH_SPECIAL_CHARACTERS, (match) => {
+      return `%${match.charCodeAt(0).toString(16)}`;
+    });
   }
 
   async save() {
