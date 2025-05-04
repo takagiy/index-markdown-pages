@@ -47,6 +47,8 @@ jobs:
           root-patterns: "example/README.md"
           exclude-patterns: "example/exclude/**/*"
           header: "## Index"
+      - name: "Check"
+        run: diff example/README.md example/exclude/README-expected.md
       - name: "Create commit"
         run: |
           git add -N .
