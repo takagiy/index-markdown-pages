@@ -5,7 +5,7 @@ An action to collect the markdown files in the repository and create an index
 # Usage
 
 ```yaml
-- use: takagiy/index-markdown-pages@v0
+- use: takagiy/index-markdown-pages@v1
   with:
     # Glob patterns (separated by newlines) matching the root documents.
     # The indexes will be written to that documents.
@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-      - use: takagiy/index-markdown-pages@v0
+      - use: takagiy/index-markdown-pages@v1
         with:
           root-patterns: README.md
           header: '## Index'
