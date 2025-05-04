@@ -9,8 +9,12 @@ inputs:
     description: 'Glob patterns (separated by newlines) matching the root documents. The indexes will be written to that documents.'
     required: false
     default: 'README.md'
+  exclude-patterns:
+    description: 'Glob patterns (separated by newlines) matching the documents to be excluded from the index.'
+    required: false
+    default: ''
   header:
-    description: 'Header to be added to the index'
+    description: 'Header to be added to the index.'
     required: false
     default: '## Index'
 runs:

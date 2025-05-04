@@ -7,10 +7,14 @@ import { Inputs } from "./Inputs";
 export async function run(): Promise<void> {
   try {
     const inputs = Inputs.get();
-    const rootDocuments = searchRootDocuments(inputs.rootPatterns);
+    const rootDocuments = searchRootDocuments(inputs.rootPatterns, {
+      excludePatterns: inputs.excludePatterns,
+    });
 
     for await (const rootDocument of rootDocuments) {
-      const childDocuments = await ChildDocuments.search(rootDocument);
+      const childDocuments = await ChildDocuments.search(rootDocument, {
+        excludePatterns: inputs.excludePatterns,
+      });
       const indexBlock = await childDocuments.toIndexBlock(inputs.header);
       const document = await Document.open(rootDocument);
       document.replaceOrAppend(indexBlock);
@@ -21,8 +25,14 @@ export async function run(): Promise<void> {
   }
 }
 
-async function* searchRootDocuments(rootPatterns: string[]) {
-  for await (const rootDocument of globStream(rootPatterns)) {
+async function* searchRootDocuments(
+  rootPatterns: string[],
+  opts: { excludePatterns: string[] },
+) {
+  for await (const rootDocument of globStream(rootPatterns, {
+    onlyFiles: true,
+    ignore: opts.excludePatterns,
+  })) {
     yield rootDocument.toString();
   }
 }

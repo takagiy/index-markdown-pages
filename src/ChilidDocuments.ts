@@ -9,13 +9,18 @@ export class ChildDocuments {
     public readonly childDocuments: string[],
   ) {}
 
-  static async search(rootDocument: string) {
+  static async search(
+    rootDocument: string,
+    opts: { excludePatterns: string[] },
+  ) {
     const rootDirectory = dirname(rootDocument);
-    const childDocuments = await glob(`${rootDirectory}/**/*.md`).then(
-      (entries) =>
-        entries
-          .filter((entry) => entry !== rootDocument)
-          .map((entry) => relative(rootDirectory, entry)),
+    const childDocuments = await glob(`${rootDirectory}/**/*.md`, {
+      onlyFiles: true,
+      ignore: opts.excludePatterns,
+    }).then((entries) =>
+      entries
+        .filter((entry) => entry !== rootDocument)
+        .map((entry) => relative(rootDirectory, entry)),
     );
     return new ChildDocuments(rootDocument, rootDirectory, childDocuments);
   }

@@ -9,8 +9,15 @@ An action to collect the markdown files in the repository and create an index
   with:
     # Glob patterns (separated by newlines) matching the root documents.
     # The indexes will be written to that documents.
+    # (default: README.md)
     root-patterns: README.md
-    # Header to be added to the index
+    # Glob patterns (separated by newlines) matching the documents to be excluded from the index.
+    # (default: '')
+    exclude-patterns: |
+        dist/**/*
+        public/**/*
+    # Header to be added to the index.
+    # (default: '## Index')
     header: '## Index'
 ```
 

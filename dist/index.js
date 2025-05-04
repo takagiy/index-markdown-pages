@@ -30947,9 +30947,12 @@ class ChildDocuments {
         this.rootDirectory = rootDirectory;
         this.childDocuments = childDocuments;
     }
-    static async search(rootDocument) {
+    static async search(rootDocument, opts) {
         const rootDirectory = dirname(rootDocument);
-        const childDocuments = await outExports.glob(`${rootDirectory}/**/*.md`).then((entries)=>entries.filter((entry)=>entry !== rootDocument).map((entry)=>relative(rootDirectory, entry)));
+        const childDocuments = await outExports.glob(`${rootDirectory}/**/*.md`, {
+            onlyFiles: true,
+            ignore: opts.excludePatterns
+        }).then((entries)=>entries.filter((entry)=>entry !== rootDocument).map((entry)=>relative(rootDirectory, entry)));
         return new ChildDocuments(rootDocument, rootDirectory, childDocuments);
     }
     async toIndexBlock(header) {
@@ -30962,23 +30965,29 @@ class ChildDocuments {
 }
 
 class Inputs {
-    constructor(rootPatterns, header){
+    constructor(rootPatterns, excludePatterns, header){
         this.rootPatterns = rootPatterns;
+        this.excludePatterns = excludePatterns;
         this.header = header;
     }
     static get() {
         const rootPatterns = coreExports.getMultilineInput("root-patterns");
+        const excludePatterns = coreExports.getMultilineInput("exclude-patterns");
         const header = coreExports.getInput("header");
-        return new Inputs(rootPatterns, header);
+        return new Inputs(rootPatterns, excludePatterns, header);
     }
 }
 
 async function run() {
     try {
         const inputs = Inputs.get();
-        const rootDocuments = searchRootDocuments(inputs.rootPatterns);
+        const rootDocuments = searchRootDocuments(inputs.rootPatterns, {
+            excludePatterns: inputs.excludePatterns
+        });
         for await (const rootDocument of rootDocuments){
-            const childDocuments = await ChildDocuments.search(rootDocument);
+            const childDocuments = await ChildDocuments.search(rootDocument, {
+                excludePatterns: inputs.excludePatterns
+            });
             const indexBlock = await childDocuments.toIndexBlock(inputs.header);
             const document = await Document.open(rootDocument);
             document.replaceOrAppend(indexBlock);
@@ -30988,8 +30997,11 @@ async function run() {
         if (error instanceof Error) coreExports.setFailed(error.message);
     }
 }
-async function* searchRootDocuments(rootPatterns) {
-    for await (const rootDocument of outExports.globStream(rootPatterns)){
+async function* searchRootDocuments(rootPatterns, opts) {
+    for await (const rootDocument of outExports.globStream(rootPatterns, {
+        onlyFiles: true,
+        ignore: opts.excludePatterns
+    })){
         yield rootDocument.toString();
     }
 }

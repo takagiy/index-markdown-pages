@@ -16,6 +16,7 @@ jobs:
       - uses: ./
         with:
           root-patterns: "example/README.md"
+          exclude-patterns: "example/exclude/**/*"
           header: "## Index"
       - run: |
           git add -N .
