@@ -23,6 +23,8 @@ An action to collect the markdown files in the repository and create an index
 
 # Example
 
+See example output on [./example/](https://github.com/takagiy/index-markdown-pages/tree/main/example).
+
 ```yaml
 jobs:
   test:
