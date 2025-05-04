@@ -17,6 +17,23 @@ inputs:
     description: 'Header to be added to the index.'
     required: false
     default: '## Index'
+  commit:
+    description: 'Whether to automatically commit the changes.'
+    required: false
+    default: true
+  commit-on:
+    description: 'Branch to commit the changes to.'
+    required: false
+    default: ${{ github.event.pull_request.ref || github.event.push.ref || github.ref }}
+  commit-message:
+    description: 'Commit message.'
+    required: false
+    default: 'docs: Update index'
+  push:
+    description: 'Whether to automatically push the changes to the remote repository.'
+    required: false
+    default: true
+
 runs:
   using: 'node20'
   main: 'dist/index.js'

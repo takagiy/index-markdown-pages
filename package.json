@@ -64,6 +64,7 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
-    "fast-glob": "^3.3.3"
+    "fast-glob": "^3.3.3",
+    "simple-git": "^3.27.0"
   }
 }

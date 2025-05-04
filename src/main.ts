@@ -2,6 +2,7 @@ import { setFailed } from "@actions/core";
 import { globStream } from "fast-glob";
 import { ChildDocuments } from "./ChilidDocuments";
 import { Document } from "./Document";
+import { Git } from "./Git";
 import { Inputs } from "./Inputs";
 
 export async function run(): Promise<void> {
@@ -20,6 +21,9 @@ export async function run(): Promise<void> {
       await document.replaceOrAppend(indexBlock);
       await document.save();
     }
+
+    const git = Git.of(inputs.git);
+    await git.commitAndPush();
   } catch (error) {
     if (error instanceof Error) setFailed(error.message);
   }

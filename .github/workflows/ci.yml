@@ -39,8 +39,6 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
       - run: git pull
       - uses: ./
         with:
@@ -49,14 +47,3 @@ jobs:
           header: "## Index"
       - name: "Check"
         run: diff example/README.md example/exclude/README-expected.md
-      - name: "Create commit"
-        run: |
-          git add -N .
-          if ! git diff --exit-code --quiet
-          then
-            git config user.email "action@github.com"
-            git config user.name "GitHub Action"
-            git add .
-            git commit -m "docs: Update index"
-            git push
-          fi

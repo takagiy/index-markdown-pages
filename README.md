@@ -2,7 +2,7 @@
 
 An action to collect the markdown files in the repository and create an index
 
-# Usage
+# API
 
 ```yaml
 - use: takagiy/index-markdown-pages@v1
@@ -19,6 +19,18 @@ An action to collect the markdown files in the repository and create an index
     # Header to be added to the index.
     # (default: '## Index')
     header: '## Index'
+    # Whether to automatically commit the changes.
+    # (default: true)
+    commit: true
+    # Branch to commit the changes to.
+    # (default: ${{ github.event.pull_request.ref || github.event.push.ref || github.ref }})
+    commit-on: ${{ github.event.pull_request.ref || github.event.push.ref || github.ref }}
+    # Commit message.
+    # (default: 'docs: Update index')
+    commit-message: 'docs: Update index'
+    # Whether to automatically push the changes to the remote repository.
+    # (default: true)
+    push: true
 ```
 
 # Example
@@ -31,24 +43,12 @@ jobs:
     name: "Create markdown index"
     runs-on: ubuntu-latest
     permissions:
+      # This is required to push the changes to GitHub.
       contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
       - use: takagiy/index-markdown-pages@v1
         with:
           root-patterns: README.md
           header: '## Index'
-      - name: Create commit
-        run: |
-          git add -N .
-          if ! git diff --exit-code --quiet
-          then
-            git config user.email "action@github.com"
-            git config user.name "GitHub Action"
-            git add .
-            git commit -m "docs: Update index"
-            git push
-          fi
 ```
