@@ -65,9 +65,9 @@ export class Document {
         `${MARKER_BEGIN}\n${append}${MARKER_END}`,
       );
     } else if (this.content.endsWith("\n")) {
-      this.content += `\n${MARKER_BEGIN}\n${append}${MARKER_END}`;
+      this.content += `\n${MARKER_BEGIN}\n${append}${MARKER_END}\n`;
     } else {
-      this.content += `\n\n${MARKER_BEGIN}\n${append}${MARKER_END}`;
+      this.content += `\n\n${MARKER_BEGIN}\n${append}${MARKER_END}\n`;
     }
   }
 }
