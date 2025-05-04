@@ -29,10 +29,11 @@ export class Git {
       .branchLocal()
       .then((branchs) => branchs.current);
     try {
-      await git.checkout(this.commitOn);
+      const commitBranch = await git.revparse(["--abbrev-ref", this.commitOn]);
+      await git.checkout(commitBranch);
       await git.commit(this.commitMessage);
       if (this.doesPush) {
-        await git.pull("origin", this.commitOn, ["--rebase"]);
+        await git.pull("origin", commitBranch, ["--rebase"]);
         await git.push();
       }
     } finally {
