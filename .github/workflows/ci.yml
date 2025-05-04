@@ -1,0 +1,60 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - run: corepack enable pnpm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - run: pnpm install
+      - run: pnpm build
+      - name: "Create commit"
+        run: |
+          git add -N .
+          if ! git diff --exit-code --quiet
+          then
+            git config user.email "action@github.com"
+            git config user.name "GitHub Action"
+            git add .
+            git commit -m "chore: Build"
+            git push
+          fi
+  test:
+    needs: build
+    name: "Example"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - run: git pull
+      - uses: ./
+        with:
+          root-patterns: "example/README.md"
+          exclude-patterns: "example/exclude/**/*"
+          header: "## Index"
+      - name: "Create commit"
+        run: |
+          git add -N .
+          if ! git diff --exit-code --quiet
+          then
+            git config user.email "action@github.com"
+            git config user.name "GitHub Action"
+            git add .
+            git commit -m "docs: Update index"
+            git push
+          fi
