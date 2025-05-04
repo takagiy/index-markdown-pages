@@ -2,10 +2,30 @@
 
 An action to collect the markdown files in the repository and create an index
 
+# Example
+
+See example output on [example/](https://github.com/takagiy/index-markdown-pages/tree/main/example).
+
+```yaml
+jobs:
+  test:
+    name: "Create markdown index"
+    runs-on: ubuntu-latest
+    permissions:
+      # This is required to push the changes to GitHub.
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - use: takagiy/index-markdown-pages@v2
+        with:
+          root-patterns: README.md
+          header: '## Index'
+```
+
 # API
 
 ```yaml
-- use: takagiy/index-markdown-pages@v1
+- use: takagiy/index-markdown-pages@v2
   with:
     # Glob patterns (separated by newlines) matching the root documents.
     # The indexes will be written to that documents.
@@ -31,24 +51,4 @@ An action to collect the markdown files in the repository and create an index
     # Whether to automatically push the changes to the remote repository.
     # (default: true)
     push: true
-```
-
-# Example
-
-See example output on [example/](https://github.com/takagiy/index-markdown-pages/tree/main/example).
-
-```yaml
-jobs:
-  test:
-    name: "Create markdown index"
-    runs-on: ubuntu-latest
-    permissions:
-      # This is required to push the changes to GitHub.
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - use: takagiy/index-markdown-pages@v1
-        with:
-          root-patterns: README.md
-          header: '## Index'
 ```
