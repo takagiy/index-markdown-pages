@@ -25,6 +25,10 @@ export class ChildDocuments {
     return new ChildDocuments(rootDocument, rootDirectory, childDocuments);
   }
 
+  isEmpty(): boolean {
+    return this.childDocuments.length === 0;
+  }
+
   async toIndexBlock(header: string): Promise<string> {
     return header.concat("\n\n|title|path|\n|----|----|\n").concat(
       await Promise.all(

@@ -19,6 +19,15 @@ export async function run(): Promise<void> {
       const childDocuments = await ChildDocuments.search(rootDocument, {
         excludePatterns: inputs.excludePatterns,
       });
+
+      if (childDocuments.isEmpty()) {
+        info(`No child documents found for "${rootDocument}".`);
+        const document = await Document.open(rootDocument);
+        await document.clean();
+        await document.save();
+        continue;
+      }
+
       const indexBlock = await childDocuments.toIndexBlock(inputs.header);
       const document = await Document.open(rootDocument);
       await document.replaceOrAppend(indexBlock);
