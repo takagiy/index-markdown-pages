@@ -1,4 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
+import type { Root, RootContent } from "mdast";
+import { fromMarkdown as mdastFromString } from "mdast-util-from-markdown";
+import { toString as mdastToString } from "mdast-util-to-string";
 
 export class Document {
   protected constructor(
@@ -37,13 +40,27 @@ export class Document {
     writeFile(this.path, this.content, "utf-8");
   }
 
+  findHeading(depth: number, mdast: Root): RootContent | null {
+    const headings = mdast.children.filter(
+      (node) => node.type === "heading" && node.depth === depth,
+    );
+    if (headings.length === 1) {
+      return headings[0] ?? null;
+    }
+    if (depth < 6) {
+      return this.findHeading(depth + 1, mdast);
+    }
+    return null;
+  }
+
   async title(): Promise<string | null> {
     const content = this.content ?? (await readFile(this.path, "utf-8"));
-    const titleMatch = content.match(/^# (.*)$/m);
-    if (!titleMatch?.[1]) {
+    const tree = mdastFromString(content);
+    const heading = this.findHeading(1, tree);
+    if (!heading) {
       return null;
     }
-    return titleMatch[1];
+    return mdastToString(heading);
   }
 
   async clean() {

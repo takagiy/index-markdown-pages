@@ -62,7 +62,10 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.1",
+    "@types/mdast": "^4.0.4",
     "fast-glob": "^3.3.3",
+    "mdast-util-from-markdown": "^2.0.2",
+    "mdast-util-to-string": "^4.0.0",
     "simple-git": "^3.27.0"
   }
 }
