@@ -47041,7 +47041,7 @@ class Inputs {
     }
     static get() {
         const rootPatterns = coreExports.getMultilineInput("root-patterns");
-        const excludePatterns = coreExports.getMultilineInput("exclude-patterns").filter((pattern)=>pattern !== "");
+        const excludePatterns = coreExports.getMultilineInput("exclude-patterns");
         const header = coreExports.getInput("header");
         const commit = coreExports.getBooleanInput("commit");
         const commitOn = coreExports.getInput("commit-on");
