@@ -15,9 +15,7 @@ export class Inputs {
 
   public static get(): Inputs {
     const rootPatterns = getMultilineInput("root-patterns");
-    const excludePatterns = getMultilineInput("exclude-patterns").filter(
-      (pattern) => pattern !== "",
-    );
+    const excludePatterns = getMultilineInput("exclude-patterns");
     const header = getInput("header");
     const commit = getBooleanInput("commit");
     const commitOn = getInput("commit-on");
